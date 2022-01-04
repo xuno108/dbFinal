@@ -108,8 +108,8 @@ session_start();
 		<div class="container">
 			<form class="form-signin" role="form" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);
 															?>" method="post">
-				<h1>登入</h1>
-				<h4 class="form-signin-heading"><?php echo $msg; ?></h4>
+				<h1 align="center">登入</h1>
+				<h4 class="form-signin-heading" align="center"><?php echo $msg; ?></h4>
 				<div align="center">
 					<input type="text" class="form-control" name="username" style="width:30%;height:40px;">
 				</div></br>
