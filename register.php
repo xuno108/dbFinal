@@ -63,10 +63,12 @@ session_start();
 				if (@!$_SESSION['login']) { ?>
 					<li><a href="login.php">登入</a></li>
 					<li><a href="register.php">註冊</a></li>
+					<li><a href="searchby.php?mySearch=">進階搜尋</a></li>
 				<?php
 				} else { ?>
 					<li class="hassubs">
 					<li><a href="">哈囉，<?php echo $_SESSION['uName']; ?></a></li>
+					<li><a href="searchby.php?mySearch=">進階搜尋</a></li>
 					<li><a href="favorite.php">收藏清單</a></li>
 					<li><a href="logout.php">登出</a></li>
 					</li>
@@ -89,7 +91,7 @@ session_start();
 			&& !empty($_POST['uName']) && !empty($_POST['uPhone']) && !empty($_POST['uEmail'])
 		) {
 
-			$uId = $_POST['uId'];
+			//$uId = $_POST['uId'];
 			$username = $_POST['username'];
 			$password = $_POST['password'];
 			$uName = $_POST['uName'];

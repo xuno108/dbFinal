@@ -1,15 +1,6 @@
 <?php
 session_start();
-?>
-<!DOCTYPE html>
-
-<?php
-if (@!$_SESSION['login']) { ?>
-	<script language="javascript">
-		location.href = "login.php"
-	</script>
-<?php
-}
+$keyword = "";
 ?>
 
 <!DOCTYPE HTML>
@@ -26,6 +17,7 @@ if (@!$_SESSION['login']) { ?>
 	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 	<link rel="stylesheet" href="assets/css/main.css" />
 	<link href="image/icon.ico" rel="shortcut icon" />
+
 	<noscript>
 		<link rel="stylesheet" href="assets/css/noscript.css" />
 	</noscript>
@@ -78,29 +70,42 @@ if (@!$_SESSION['login']) { ?>
 
 		<!-- Main -->
 		<div id="main">
+
 			<div class="inner">
-				<h1>收藏清單</h1>
+				<h1>進階搜尋</h1>
+				<div class="container">
+					<form name="form" action="" method="get">
+						<input type="search" name="mySearch" id="mySearch" placeholder="搜尋..." style="width:500px;height:60px;padding:15px">
+
+						<button type="submit" name="" onclick="javascript:location.href='searchby.php'" style="width:100px;height:60px;">搜！</button>
+
+					</form>
+				</div>
 
 
+				<?php
 
-				<form action="favorite.php" method="post">
-					<?php
+
+				$keyword = $_GET['mySearch'];
+				if ($keyword != "") {
+					//$keyword = $_GET['keyword'];
+					echo "<h1>搜尋「" . $keyword . "」的結果...</h1>";
+
 					$con = new mysqli("localhost", "root", "Tl51189@", "moviedb");
 
 					if ($con->connect_error) {
-						die("Connection failed: " . $conn->connect_error);
+						die("Connection failed: " . $con->connect_error);
 					}
 
-					$uId = $_SESSION['uId'];
+					$sqlQuery = "SELECT * FROM movie WHERE mChiName Like '%$keyword%' OR mEngName Like '%$keyword%' OR mDir Like '%$keyword%'";
 
-					//$sqlquery = "SELECT fId, mChiName, mEngName, mDate, mDir, mInfo, mImg FROM favorite, movie, account WHERE favorite.mId=movie.mId AND favorite.uId='$uId'"
-					$sqlquery = "SELECT fId, mChiName, mEngName, mDate, mDir, mInfo, mImg FROM favorite LEFT JOIN movie ON favorite.mId = movie.mId WHERE favorite.uId='$uId'";
-					$result = $con->query($sqlquery);
+					//$sqlQuery = "SELECT * FROM movie WHERE mCat Like '%幻%' ";
+					$result = $con->query($sqlQuery);
 
-					while ($row = mysqli_fetch_array($result)) //一直撈
-					{
+
+					while ($row = mysqli_fetch_array($result)) {
 						echo
-						"<section class='spotlights'>
+						"<section id='one' class='spotlights'>
 										<section>
 											
 											<img src=\"" . $row['mImg'] .  "\" width=\"200\" alt=\"\" data-position=\"center center\" />
@@ -113,11 +118,31 @@ if (@!$_SESSION['login']) { ?>
 						echo "上映日期：" . $row['mDate'] . "<br>";
 						echo "導演：" . $row['mDir'] . "<p>";
 						echo "" . $row['mInfo'] . "<br>";
-						//echo $row['fId'];
 						echo "<ul class=\"actions\">";
-					?>
-						<li><a class="button" type="submit" formmethod="get" onclick="location.href='delete.php?fId=<?= $row['fId'] ?>'">移除</a></li>
-					<?php
+						if (@$_SESSION['login'] === true) {
+				?>
+							<?php
+							$rsql = "SELECT * FROM favorite";
+							$faresult = $con->query($rsql);
+							$duplicate = false; // 檢查帳號是否重複
+							$uId = $_SESSION['uId'];
+							$mId = $row['mId'];
+							while ($frow = $faresult->fetch_assoc()) { // 一直撈
+								if ($uId == $frow["uId"] && $mId == $frow["mId"]) {
+									$duplicate = true;
+								}
+							}
+							if (!$duplicate) { ?>
+								<li><a class="button" type="submit" formmethod="get" onclick="location.href='get.php?mId=<?= $row['mId'] ?>', alert('已成功加入片單')">加入片單</a></li>
+							<?php
+							} else {
+							?>
+								<li><a class="button">已加入片單！</a></li>
+				<?php
+							}
+
+							/*<li><a href="generic.html" class="button" onclick="location.href='get.php?mID=<?=$row['mID']?>&mChiName=<?=$row['mChiName']?>&mEngName=<?=$row['mEngName']?>&mDate=<?=$row['mDate']?>&mDir=<?=$row['mDir']?>&mInfo=<?=$row['mInfo']?>'">My Favorite</a></li>*/
+						}
 						echo "</ul>
 												</div>
 											</div>
@@ -125,8 +150,14 @@ if (@!$_SESSION['login']) { ?>
 									</section>
 									<hr>";
 					}
+					if (!mysqli_fetch_array($result)) {
+						echo "<h2>沒有結果了！</h2>";
+					}
 					$con->close();
-					?>
+				} else {
+					echo "<h2>請輸入搜尋關鍵字...</h2>";
+				}
+				?>
 			</div>
 		</div>
 
@@ -148,7 +179,7 @@ if (@!$_SESSION['login']) { ?>
 							</div>
 						</div>
 						<ul class="actions">
-							<li><input type="submit" value="送出" class="primary" onclick="alert('已送出回饋！')"/></li>
+							<li><input type="submit" value="送出" class="primary" onclick="alert('已送出回饋！')" /></li>
 						</ul>
 					</form>
 				</section>

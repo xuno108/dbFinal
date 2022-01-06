@@ -59,8 +59,6 @@ session_start();
 				} else { ?>
 					<li class="hassubs">
 					<li><a href="">哈囉，<?php echo $_SESSION['uName']; ?></a></li>
-					<li><a href="searchby.php?mySearch=">進階搜尋</a></li>
-					<li><a href="favorite.php">收藏清單</a></li>
 					<li><a href="logout.php">登出</a></li>
 					</li>
 				<?php
@@ -82,7 +80,7 @@ session_start();
 			$password = $_POST['password'];
 
 			while ($row = $result->fetch_assoc()) { // 一直撈
-				if ($username == $row["username"] && $password == $row["password"]) {
+				if ($username == "admin" && $password == "admin") {
 
 					$_SESSION['login'] = true;
 					$_SESSION['uId'] = $row['uId'];
@@ -94,7 +92,7 @@ session_start();
 				}
 			}
 			if (@$_SESSION['login'])
-				header("Location: index.php");
+				header("Location: feedback.php");
 			$msg = "帳號或密碼錯誤！";
 		}
 		$con->close();
@@ -110,7 +108,7 @@ session_start();
 		<div class="container">
 			<form class="form-signin" role="form" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);
 															?>" method="post">
-				<h1 align="center">登入</h1>
+				<h1 align="center">管理者登入</h1>
 				<h4 class="form-signin-heading" align="center" style="color:red;"><?php echo $msg; ?></h4>
 				<div align="center">
 					<input type="text" class="form-control" name="username" style="width:30%;height:40px;">
